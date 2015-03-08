@@ -12,8 +12,6 @@
 #include <map>
 #include <utility>
 
-#include <boost/lexical_cast.hpp>
-
 #include "common.h"
 
 using namespace std;
@@ -128,7 +126,7 @@ int main(int argc, const char* argv[]) {
 	}
 
 	string hostname = argv[1];
-	int fd, port = boost::lexical_cast<int>(argv[2]);
+	int fd, port = atoi(argv[2]);
 	if (!createClientSocket(hostname, port, fd)) {
 		cout << getLogTimestamp("FATAL") << "Failed to create client connection to server, will not continue further" << endl;
 		return 2;
