@@ -165,15 +165,16 @@ int main(int argc, const char* argv[]) {
 			totalBytesWritten += bufferSegment.second;
 
 			if (SSL_read(sslConnection, &longBuffer, sizeof(longBuffer)) <= 0) {
-				cout << endl << getLogTimestamp("ERROR") << "Failed to read from SSL socket [Error: " << getSSLErrorMessage(ERR_get_error())
-				<< "], will not continue further." << endl;
+				cout << endl << getLogTimestamp("ERROR") << "Failed to read from SSL socket [Doc#: " << i << ", Error: " 
+					<< getSSLErrorMessage(ERR_get_error()) << "], will not continue further." << endl;
 				break;
 			}
 			totalBytesRead += sizeof(longBuffer);
 
 			if (!(i % 1000) && i > 0) {
-				cout << endl << "Ack received for #" << i << " [SentBytes: " << bufferSegment.second << ", AckFor: " << ntohl(longBuffer) 
-					<< ", Total {Read: " << totalBytesRead << ", Written: " << totalBytesWritten << "} ]" << endl;
+				cout << endl << getLogTimestamp("INFO") << "Ack received for #" << i << " [SentBytes: " << bufferSegment.second 
+					<< ", AckFor: " << ntohl(longBuffer) << ", Total {Read: " << totalBytesRead << ", Written: " << totalBytesWritten 
+					<< "} ]" << endl;
 			}
 
 			cout << "." << flush;

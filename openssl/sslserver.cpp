@@ -162,10 +162,10 @@ bool processClient(SSL_CTX* sslContext, int clientFd) {
 			docBuffer[0] = 0;
 			bytesRead = SSL_read(ssl, docBuffer, min(bytesRemaining, sizeof(docBuffer)));
 			if (bytesRead < 0) {
-				cout << getLogTimestamp("ERROR") << "Failed to read the entire document from the client connection [Expected: " << docLength 
-					<< ", Remaining: " << bytesRemaining << ", Read: " << bytesRead << ", TotalBytes {Read: " << totalBytesRead
-					<< ", Written: " << totalBytesWritten << "}, error: " << getSSLErrorMessage(ERR_get_error())
-					<< "], will not continue further." << endl;
+				cout << getLogTimestamp("ERROR") << "Failed to read the entire document from the client connection [Doc#: " << i
+					<< ", Expected: " << docLength << ", Remaining: " << bytesRemaining << ", Read: " << bytesRead 
+					<< ", TotalBytes {Read: " << totalBytesRead << ", Written: " << totalBytesWritten << "}, error: " 
+					<< getSSLErrorMessage(ERR_get_error()) << "], will not continue further." << endl;
 				goto cleanup;
 			} else if ((unsigned long)bytesRead <= bytesRemaining) {
 				totalBytesRead += bytesRead;
