@@ -161,7 +161,7 @@ bool processClient(SSL_CTX* sslContext, int clientFd) {
 		while (bytesRemaining > 0) {
 			docBuffer[0] = 0;
 			bytesRead = SSL_read(ssl, docBuffer, min(bytesRemaining, sizeof(docBuffer)));
-			if (bytesRead < 0) {
+			if (bytesRead <= 0) {
 				cout << getLogTimestamp("ERROR") << "Failed to read the entire document from the client connection [Doc#: " << i
 					<< ", Expected: " << docLength << ", Remaining: " << bytesRemaining << ", Read: " << bytesRead 
 					<< ", TotalBytes {Read: " << totalBytesRead << ", Written: " << totalBytesWritten << "}, error: " 
