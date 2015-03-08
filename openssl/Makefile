@@ -10,3 +10,6 @@ all: sslserver sslclient
 sslserver: common.o sslserver.o
 
 sslclient: common.o sslclient.o
+
+clean:
+	rm -f sslclient sslserver *.o
