@@ -29,7 +29,6 @@ string getLogTimestamp(const string& type) {
 	stringstream ss;
 
 	// Chrono is broken in libstdc++
-	//time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
 	time_t tt = ::time(NULL);
 	struct tm tt_local = {};
 	localtime_r(&tt, &tt_local);
