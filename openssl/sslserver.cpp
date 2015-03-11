@@ -46,7 +46,7 @@ bool createServerSocket(int port, int& fd) {
     return true;
 }
 
-SSL_CTX* initializeSSL(const string& certFile) {
+SSL_CTX* initializeSSL(const string& certFile, const string& cipherConfig) {
 
 	SSL_library_init();
 	SSL_load_error_strings();
@@ -57,7 +57,6 @@ SSL_CTX* initializeSSL(const string& certFile) {
     SSL_CTX* sslContext = SSL_CTX_new(SSLv23_method());
     if (!sslContext) {
     	cout << getLogTimestamp("ERROR") << "Failed to create context for the SSL: " << getSSLErrorMessage(ERR_get_error()) << endl;
-    	ERR_print_errors_fp(stderr);
     	return NULL;
     }
 
@@ -70,7 +69,18 @@ SSL_CTX* initializeSSL(const string& certFile) {
 	// !EXPORT - Disable export ciphers (40/56 bit) 
 	// !aNULL - Disable anonymous auth ciphers
 	// @STRENGTH - Sort ciphers based on strength 
-	SSL_CTX_set_cipher_list(sslContext, "HIGH:!EXPORT:!aNULL@STRENGTH");
+	string contextCiphers = "HIGH:!EXPORT:!aNULL@STRENGTH";
+	if (!cipherConfig.empty()) {
+		contextCiphers = cipherConfig;
+	}
+
+	if (!SSL_CTX_set_cipher_list(sslContext, contextCiphers.c_str())) {
+    	cout << getLogTimestamp("ERROR") << "Failed to set the context cipher list for SSL: " << getSSLErrorMessage(ERR_get_error()) << endl;
+    	return NULL;
+	}
+
+	// Disabling the AESGCM - should work fine without any issues
+	//SSL_CTX_set_cipher_list(sslContext, "HIGH:!EXPORT:!AESGCM:!aNULL@STRENGTH");
 
 	// If renegotiation is needed, don't return from recv() or send() until it's successful.
 	// Note: this is for blocking sockets only.
@@ -140,7 +150,8 @@ bool processClient(SSL_CTX* sslContext, int clientFd) {
 		bytesRead = 0;
 		bytesRead = SSL_read(ssl, &longBuffer, sizeof(longBuffer));
 		if (bytesRead <= 0) {
-			ERR_print_errors_fp(stderr);
+			cout << getLogTimestamp("ERROR") << "Failed to read the data from cosket [bytesRead: " << bytesRead
+				<< ", Error: " << getSSLErrorMessage(ERR_get_error()) << "], will not continue further." << endl;
 			retValue = false;
 			goto cleanup;
 		}
@@ -196,7 +207,7 @@ int main(int argc, const char* argv[]) {
 		exit(0);
 	}
 
-	SSL_CTX* sslContext = initializeSSL(argv[2]);
+	SSL_CTX* sslContext = initializeSSL(argv[2], "");
 	if (!sslContext) {
 		cout << getLogTimestamp("FATAL") << "Failed to create SSL context for the server, will not continue further..." << endl;
 	}
