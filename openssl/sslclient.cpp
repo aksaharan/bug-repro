@@ -12,6 +12,9 @@
 #include <map>
 #include <utility>
 
+#include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+
 #include "common.h"
 
 using namespace std;
