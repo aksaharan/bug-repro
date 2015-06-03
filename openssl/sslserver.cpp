@@ -19,8 +19,6 @@
 
 using namespace std;
 
-#define FAIL    -1
-
 bool createServerSocket(int port, int& fd) {   
     // set SIGPIPE to IGNORE for the sockets
     ::signal(SIGPIPE, SIG_IGN);

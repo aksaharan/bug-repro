@@ -29,12 +29,18 @@ string getLogTimestamp(const string& type) {
 	stringstream ss;
 
 	// Chrono is broken in libstdc++
-	//time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
 	time_t tt = ::time(NULL);
 	struct tm tt_local = {};
 	localtime_r(&tt, &tt_local);
 
-	ss << "[" << tt_local.tm_year + 1900 << "-" << setw(2) << setfill('0') << tt_local.tm_mon << "-" << tt_local.tm_mday
-		<< "T" << tt_local.tm_hour << ":" << tt_local.tm_min << ":" << tt_local.tm_sec << "] " << type << " ";
+	ss << "[" << tt_local.tm_year + 1900 << "-" 
+		<< setfill('0') << setw(2) << tt_local.tm_mon << "-" 
+		<< setfill('0') << setw(2) << tt_local.tm_mday
+		<< "T" 
+		<< setfill('0') << setw(2) << tt_local.tm_hour << ":" 
+		<< setfill('0') << setw(2) << tt_local.tm_min << ":" 
+		<< setfill('0') << setw(2) << tt_local.tm_sec << "] "
+		<< setw(0)
+		<< type << " ";
 	return ss.str();
 }
